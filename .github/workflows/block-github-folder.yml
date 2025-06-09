@@ -1,0 +1,34 @@
+# Se activa cuando alguien crea o actualiza un Pull Request hacia master
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-changes:
+    name: Detectar cambios peligrosos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout completo del repositorio
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Trae todo el historial, incluidas ramas remotas
+
+      - name: Detectar cambios peligrosos
+        run: |
+          # Compara lo que viene en el PR (HEAD) con la rama origin/master
+          CHANGED=$(git diff --name-only origin/master...HEAD)
+          echo "📂 Archivos modificados en este PR: $CHANGED"
+
+          if [ "$CHANGED" ]; then
+            # Si alguno de los archivos modificados está en .github/, bloqueamos
+            if echo "$CHANGED" | grep -q '^\.github/'; then
+              echo "🚫 Oops… No se permite modificar la carpeta .github/ para otros usuarios."
+              exit 1
+            else
+              echo "✅ Todo en orden. No se detectaron cambios prohibidos en .github/."
+            fi
+          else
+            echo "ℹ️ No se detectaron cambios (o es un PR vacío)."
+          fi
