@@ -42,28 +42,6 @@ string nombres[] = {
 };
 const int nombres_length = sizeof(nombres) / sizeof(string);
 
-const int indice_bloque_de_tierra_ABAJO = 0;
-const int indice_bloque_de_tierra_ARRIBA = 1;
-const int indice_bloque_de_tierra_LADO = 2;
-const int indice_pierna_ABAJO = 3;
-const int indice_pierna_ADELANTE = 4;
-const int indice_pierna_ARRIBA = 5;
-const int indice_pierna_ATRAS = 6;
-const int indice_pierna_LADO = 7;
-const int indice_brazo_ADELANTE_Y_ATRAS = 8;
-const int indice_brazo_CONTRA_Y_CONTACTO_TORSO = 9;
-const int indice_cabeza_ABAJO = 10;
-const int indice_cabeza_ADELANTE = 11;
-const int indice_cabeza_ARRIBA = 12;
-const int indice_cabeza_LADO = 13;
-const int indice_torso_ADELANTE = 14;
-const int indice_torso_ATRAS = 15;
-const int indice_torso_DERECHA = 16;
-const int indice_torso_IZQUIERDA = 17;
-const int indice_torso_ABAJO = 18;
-const int indice_torso_ARRIBA = 19;
-const int indice_cabeza_ATRAS = 20;
-
 GLuint texturas[nombres_length];
 
 
@@ -86,6 +64,15 @@ void cargarImagenes() {
 		const string ruta = "texturas/" + nombres[i];
 		loadTexturesFromFile(ruta.c_str(), i);
 	}
+}
+
+int buscarTextura(string nombre) {  
+    for (int i = 0; i < nombres_length; i++) {  
+        if (nombres[i] == nombre) {  
+            return i;  
+        }  
+    }  
+    throw runtime_error("El nombre de monito especificado no existe :,v");  
 }
 
 void iniciarVentana(int w, int h) {
@@ -174,10 +161,11 @@ void ejes() {
 
 
 }
+
 //NOTA: esta funcion es para un bloque SIMETRICO
-void dibujarTexturaBloque(int indice, float tamaño, float rotar_ejeX, float rotar_ejeY, float c_x, float c_y, float c_z) {
+void dibujarTexturaBloque(string textura_nombre, float tamaño, float rotar_ejeX, float rotar_ejeY, float c_x, float c_y, float c_z) {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texturas[indice]);
+	glBindTexture(GL_TEXTURE_2D, texturas[buscarTextura(textura_nombre)]);
 	glColor3ub(255, 255, 255);
 	glPushMatrix();
 	glTranslated(c_x, c_y, c_z);
@@ -193,9 +181,9 @@ void dibujarTexturaBloque(int indice, float tamaño, float rotar_ejeX, float rota
 	glDisable(GL_TEXTURE_2D);
 }
 //NOTA: esta funcion es para un bloque NO SIMETRICO
-void dibujarTexturaBloque(int indice, float altura, float anchura, float rotar_ejeX, float rotar_ejeY, float rotar_ejeZ, float c_x, float c_y, float c_z) {
+void dibujarTexturaBloque(string nombre_textura, float altura, float anchura, float rotar_ejeX, float rotar_ejeY, float rotar_ejeZ, float c_x, float c_y, float c_z) {
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texturas[indice]);
+	glBindTexture(GL_TEXTURE_2D, texturas[buscarTextura(nombre_textura)]);
 	glColor3ub(255, 255, 255);
 	glPushMatrix();
 	glTranslated(c_x, c_y, c_z);
@@ -229,19 +217,19 @@ void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float cood
 	const float correcion = (largo_y_ancho / 2);
 
 	//dibujar un lado del bloque EJE Z atras
-	dibujarTexturaBloque(indice_bloque_de_tierra_LADO, largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - (correcion + 0.01));
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - (correcion + 0.01));
 	//dibujar un lado del bloque EJE Z adelante
-	dibujarTexturaBloque(indice_bloque_de_tierra_LADO, largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + (correcion + 0.01));
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + (correcion + 0.01));
 	//dibujar un lado del bloque EJE X izquierda
-	dibujarTexturaBloque(indice_bloque_de_tierra_LADO, largo_y_ancho, 0, -90, coodenada_centroX - (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
 	//dibujar un lado del bloque EJE X derecha
-	dibujarTexturaBloque(indice_bloque_de_tierra_LADO, largo_y_ancho, 0, -90, coodenada_centroX + (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
 
 	//textura top y bottom :V
 	//textura en el TOP
-	dibujarTexturaBloque(indice_bloque_de_tierra_ARRIBA, largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + (correcion + 0.01), coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ARRIBA.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + (correcion + 0.01), coodenada_centroZ - correcion);
 	//textura en el bottom
-	dibujarTexturaBloque(indice_bloque_de_tierra_ABAJO, largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - (correcion + 0.01), coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - (correcion + 0.01), coodenada_centroZ - correcion);
 
 }
 
@@ -281,7 +269,7 @@ void pisoDeTierra(float largo_ancho_de_los_bloques) {
 
 }
 //	texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], float indice_textura[], float rotacionXYZ[]) {
+void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], string indice_textura[], float rotacionXYZ[]) {
 	glPushMatrix();
 
 	glTranslated(coordenadasXYZ[0], coordenadasXYZ[1], coordenadasXYZ[2]);
@@ -318,7 +306,7 @@ void escena1Steve() {
 	//Pierna izquierda
 	//texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	float coordenada_pierna_izquierda[] = { 1,4,0 };
-	float texturas_pierna[] = { indice_pierna_ATRAS,indice_pierna_ADELANTE,indice_pierna_LADO,indice_pierna_LADO,indice_pierna_ARRIBA,indice_pierna_ABAJO };
+	string texturas_pierna[] = { "pierna ATRAS.bmp","pierna ADELANTE.bmp","pierna LADO.bmp","pierna LADO.bmp","pierna ARRIBA.bmp","pierna ABAJO.bmp" };
 	float dimensiones_pierna[] = { 2,8,2 };
 	float rotaciones_pierna_izquierda[] = {0,0,0};
 	bloque_con_textura_deforme(coordenada_pierna_izquierda, dimensiones_pierna, texturas_pierna, rotaciones_pierna_izquierda);
@@ -331,7 +319,7 @@ void escena1Steve() {
 	//torso
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	float coordenada_torso[] = { 0,12,0 };
-	float texturas_torso[] = { indice_torso_ATRAS,indice_torso_ADELANTE,indice_torso_DERECHA,indice_torso_IZQUIERDA,indice_torso_ARRIBA,indice_torso_ABAJO };
+	string texturas_torso[] = { "torso ATRAS.bmp","torso ADELANTE.bmp","torso DERECHA.bmp","torso IZQUIERDA.bmp","torso ARRIBA.bmp","torso ABAJO.bmp" };
 	float dimensiones2[] = { 4,8,2 };
 	float rotaciones_pierna_torso[] = { 0,0,0 };
 	bloque_con_textura_deforme(coordenada_torso, dimensiones2, texturas_torso, rotaciones_pierna_torso);
@@ -339,7 +327,7 @@ void escena1Steve() {
 	//cabeza
 	float coordenadas_cabeza[] = { 0,18,0 };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float texturas_cabeza[] = { indice_cabeza_ATRAS,indice_cabeza_ADELANTE,indice_cabeza_LADO ,indice_cabeza_LADO,indice_cabeza_ARRIBA,indice_cabeza_ABAJO };
+	string texturas_cabeza[] = { "cabeza ATRAS.bmp","cabeza ADELANTE.bmp","cabeza LADO.bmp" ,"cabeza LADO.bmp","cabeza ARRIBA.bmp","cabeza ABAJO.bmp" };
 	float dimensiones_cabeza[] = { 4.5,4.5,4.5 };
 	float rotaciones_cabeza[] = { 0,0,0 };
 	bloque_con_textura_deforme(coordenadas_cabeza, dimensiones_cabeza, texturas_cabeza, rotaciones_cabeza);
@@ -347,7 +335,7 @@ void escena1Steve() {
 	//brazo izquierdo
 	float coordenadas_brazo_izquierdo[] = { 3,12,0 };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float texturas_brazo[] = { indice_brazo_ADELANTE_Y_ATRAS,indice_brazo_ADELANTE_Y_ATRAS,indice_brazo_CONTRA_Y_CONTACTO_TORSO,indice_brazo_CONTRA_Y_CONTACTO_TORSO,indice_bloque_de_tierra_ARRIBA,indice_bloque_de_tierra_ABAJO };
+	string texturas_brazo[] = { "brazo ADELANTE Y ATRAS.bmp","brazo ADELANTE Y ATRAS.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","bloque de tierra ARRIBA.bmp","bloque de tierra ABAJO.bmp" };
 	float dimensiones_brazo_izquierdo[] = { 2,8,2 };
 	float rotaciones_brazo_izquierdo[] = { 0,0,0 };
 	bloque_con_textura_deforme(coordenadas_brazo_izquierdo, dimensiones_brazo_izquierdo, texturas_brazo, rotaciones_brazo_izquierdo);
