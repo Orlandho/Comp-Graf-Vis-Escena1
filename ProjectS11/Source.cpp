@@ -4,7 +4,7 @@
 #include <iostream>
 #include "texturas/RGBImage.h"
 #include <math.h>
-
+#define PI 3.14159265f
 using namespace std;
 
 
@@ -219,7 +219,7 @@ void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float cood
 }
 
 //piso de tierra como en mi barrio :,,,,,V SAQUENME DE PERU
-void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_atras_direccionZ, float limite_adelante_direccionZ,float c1_zonaPXZ[],float c2_zonaPXZ[]) {
+void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_atras_direccionZ, float limite_adelante_direccionZ, float c1_zonaPXZ[], float c2_zonaPXZ[]) {
 	string mError = "Error en pisoDeTierra(float largo_ancho_bloque,float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_adelante_direccionZ, float limite_atras_direccionZ): ";
 
 	if (largo_ancho_bloque <= 0) {
@@ -231,17 +231,17 @@ void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limi
 	if (coordenadaOrigen[0]<limite_izquierdo_direccionX || coordenadaOrigen[0] >limite_derecho_direccionX || coordenadaOrigen[2] < limite_atras_direccionZ || coordenadaOrigen[2] >limite_adelante_direccionZ) {
 		throw runtime_error(mError + "Papu, Las coordenadas de origen deben estar dentro de los limites especificados, (inserte sticker de monito).");
 	}
-	if (c1_zonaPXZ[0]> c2_zonaPXZ[0]|| c1_zonaPXZ[1] > c2_zonaPXZ[1]) {
+	if (c1_zonaPXZ[0] > c2_zonaPXZ[0] || c1_zonaPXZ[1] > c2_zonaPXZ[1]) {
 		throw runtime_error(mError + "Papu, Las coordenadas de la zona prohibida estan mal. Recuerda que c1 siempre esta más a la izquierda y abajo que c2");
 	}
 
-	float verdaderoOrigen[] = { (limite_izquierdo_direccionX<0?-1:1)*(trunc((abs(limite_izquierdo_direccionX) - abs(coordenadaOrigen[0])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[0] ,(limite_atras_direccionZ < 0 ? -1 : 1)*(trunc((abs(limite_atras_direccionZ) - abs(coordenadaOrigen[2])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[2] };
+	float verdaderoOrigen[] = { (limite_izquierdo_direccionX < 0 ? -1 : 1) * (trunc((fabs(limite_izquierdo_direccionX) - fabs(coordenadaOrigen[0])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[0] ,(limite_atras_direccionZ < 0 ? -1 : 1) * (trunc((fabs(limite_atras_direccionZ) - fabs(coordenadaOrigen[2])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[2] };
 	bloqueDeTierra(verdaderoOrigen[0], coordenadaOrigen[1], verdaderoOrigen[1], largo_ancho_bloque);
 	for (float x = verdaderoOrigen[0]; x <= limite_derecho_direccionX; x += largo_ancho_bloque)
 	{
 		for (float z = verdaderoOrigen[1]; z <= limite_adelante_direccionZ; z += largo_ancho_bloque)
 		{
-			if(x >= c1_zonaPXZ[0] && x <= c2_zonaPXZ[0] && z >= c1_zonaPXZ[1] && z <= c2_zonaPXZ[1]) {
+			if (x >= c1_zonaPXZ[0] && x <= c2_zonaPXZ[0] && z >= c1_zonaPXZ[1] && z <= c2_zonaPXZ[1]) {
 				continue; //no dibujar bloque en zona prohibida
 			}
 			bloqueDeTierra(x, coordenadaOrigen[1], z, largo_ancho_bloque);
@@ -331,6 +331,43 @@ void escena1Steve() {
 
 }
 
+void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_limite) {
+	for (float i = coordenada_inicial[1]; i < altura_limite; i += ancho)
+	{
+		bloqueDeTierra(coordenada_inicial[0], i, coordenada_inicial[2], ancho);
+	}
+}
+
+float porcentajePi(float coordenada_actual, float c_final,float largo) {
+
+	float largo_actual = fabs(c_final) - fabs(coordenada_actual);
+	return largo_actual/ largo;
+}
+
+float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplitud) {
+	float altura = sin(PI*x_porcentaje) * amplitud + sin(PI * z_porcentaje) * amplitud;
+	return altura > 0 ? altura : 0;
+}
+
+void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura) {
+	if (largo <= 0) {
+		throw runtime_error("El largo de la montaña debe ser mayor a 0");
+	}
+
+	float cX_final = esquinaOrigen[0] + largo;
+	float cZ_final = esquinaOrigen[2] + largo;
+
+	for (float x = esquinaOrigen[0]; x <= cX_final; x += anchoBloque)
+	{
+		for (float z = esquinaOrigen[2]; z <= cZ_final; z += anchoBloque)
+		{
+			float c_temp[] = { x, esquinaOrigen[1], z};
+			dibujarPilarArriba(c_temp, anchoBloque, esquinaOrigen[1] + calcularAlturaMontaña(porcentajePi(x,cX_final,largo), porcentajePi(z, cZ_final, largo), altura));
+		}
+
+	}
+}
+
 void dibujar() {
 
 	inicializarLuces();
@@ -346,12 +383,12 @@ void dibujar() {
 	//codigo epicardo
 	float coordenadaOrigen[] = { 0.f,-2.5f,0.f };
 	//zona prohibida, es decir no se dibujará bloques en esa zona
-	float c1XZ[] = {-2.5f,2.5f};
-	float c2XZ[] = {10.5f,11.f};
+	float c1XZ[] = { -2.5f,2.5f };
+	float c2XZ[] = { 10.5f,11.f };
 	pisoDeTierra(5, coordenadaOrigen, -100, 100, -100, 100, c1XZ, c2XZ);
 
-	//aqui irá Steve
-	//bloque_con_textura_deforme(10,10,10,8,2);
+	float coordenadaMontaña[] = { 0, 0, 0 };
+	montaña(5, coordenadaMontaña, 50, 50);
 
 	escena1Steve();
 	//aqui irá la entrada a la mina uwu
