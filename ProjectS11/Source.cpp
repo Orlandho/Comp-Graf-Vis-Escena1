@@ -37,7 +37,8 @@ string nombres[] = {
 "torso IZQUIERDA.bmp",
 "torso ABAJO.bmp",
 "torso ARRIBA.bmp",
-"cabeza ATRAS.bmp"
+"cabeza ATRAS.bmp",
+"textura_piedra.bmp"
 };
 
 const int nombres_length = sizeof(nombres) / sizeof(string);
@@ -218,6 +219,28 @@ void bloqueDeTierraGras(float coodenada_centroX, float coodenada_centroY, float 
 
 }
 
+void bloqueDePiedra(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
+
+	//A partir de aqui es el codigo para darle textura
+	const float correcion = (largo_y_ancho / 2.f);
+
+	//dibujar un lado del bloque EJE Z atras
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	//dibujar un lado del bloque EJE Z adelante
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + correcion);
+	//dibujar un lado del bloque EJE X izquierda
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 0, -90, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	//dibujar un lado del bloque EJE X derecha
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 0, -90, coodenada_centroX + correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+
+	//textura top y bottom :V
+	//textura en el TOP
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + correcion, coodenada_centroZ - correcion);
+	//textura en el bottom
+	dibujarTexturaBloque("textura_piedra.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+
+}
+
 void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
 
 	//A partir de aqui es el codigo para darle textura
@@ -285,9 +308,9 @@ void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], 
 	glPopMatrix();
 
 	//A partir de aqui es el codigo para darle textura
-	const float correcionAltura = dimensionesXYZ[1] / 2;
-	const float correcionAnchoX = dimensionesXYZ[0] / 2;
-	const float correcionAnchoZ = dimensionesXYZ[2] / 2;
+	const float correcionAltura = dimensionesXYZ[1] / 2.f;
+	const float correcionAnchoX = dimensionesXYZ[0] / 2.f;
+	const float correcionAnchoZ = dimensionesXYZ[2] / 2.f;
 	//dibujar un lado del bloque EJE Z atras
 	dibujarTexturaBloque(indice_textura[0], dimensionesXYZ[1], dimensionesXYZ[0], rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] - (correcionAnchoZ + 0.01));
 	//dibujar un lado del bloque EJE Z adelante
@@ -308,45 +331,45 @@ void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], 
 void escena1Steve() {
 	//Pierna izquierda
 	//texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float coordenada_pierna_izquierda[] = { 1,4,0 };
+	float coordenada_pierna_izquierda[] = { 1.f,4.f,0.f };
 	string texturas_pierna[] = { "pierna ATRAS.bmp","pierna ADELANTE.bmp","pierna LADO.bmp","pierna LADO.bmp","pierna ARRIBA.bmp","pierna ABAJO.bmp" };
-	float dimensiones_pierna[] = { 2,8,2 };
-	float rotaciones_pierna_izquierda[] = { 0,0,0 };
+	float dimensiones_pierna[] = { 2.f,8.f,2.f };
+	float rotaciones_pierna_izquierda[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_pierna_izquierda, dimensiones_pierna, texturas_pierna, rotaciones_pierna_izquierda);
 
 	//pierna derecha
-	float coordenada_pierna_derecha[] = { -1,4,0 };
-	float rotaciones_pierna_derecha[] = { 0,0,0 };
+	float coordenada_pierna_derecha[] = { -1.f,4.f,0.f };
+	float rotaciones_pierna_derecha[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_pierna_derecha, dimensiones_pierna, texturas_pierna, rotaciones_pierna_derecha);
 
 	//torso
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float coordenada_torso[] = { 0,12,0 };
+	float coordenada_torso[] = { 0.f,12.f,0.f };
 	string texturas_torso[] = { "torso ATRAS.bmp","torso ADELANTE.bmp","torso DERECHA.bmp","torso IZQUIERDA.bmp","torso ARRIBA.bmp","torso ABAJO.bmp" };
-	float dimensiones2[] = { 4,8,2 };
-	float rotaciones_pierna_torso[] = { 0,0,0 };
+	float dimensiones2[] = { 4.f,8.f,2.f };
+	float rotaciones_pierna_torso[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_torso, dimensiones2, texturas_torso, rotaciones_pierna_torso);
 
 	//cabeza
-	float coordenadas_cabeza[] = { 0,18,0 };
+	float coordenadas_cabeza[] = { 0.f,18.f,0.f };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	string texturas_cabeza[] = { "cabeza ATRAS.bmp","cabeza ADELANTE.bmp","cabeza LADO.bmp" ,"cabeza LADO.bmp","cabeza ARRIBA.bmp","cabeza ABAJO.bmp" };
-	float dimensiones_cabeza[] = { 4.5,4.5,4.5 };
-	float rotaciones_cabeza[] = { 0,0,0 };
+	float dimensiones_cabeza[] = { 4.5f,4.5f,4.5f };
+	float rotaciones_cabeza[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenadas_cabeza, dimensiones_cabeza, texturas_cabeza, rotaciones_cabeza);
 
 	//brazo izquierdo
-	float coordenadas_brazo_izquierdo[] = { 3,12,0 };
+	float coordenadas_brazo_izquierdo[] = { 3.f,12.f,0.f };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	string texturas_brazo[] = { "brazo ADELANTE Y ATRAS.bmp","brazo ADELANTE Y ATRAS.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","bloque de tierra gras ARRIBA.bmp","bloque de tierra ABAJO.bmp" };
-	float dimensiones_brazo_izquierdo[] = { 2,8,2 };
-	float rotaciones_brazo_izquierdo[] = { 0,0,0 };
+	float dimensiones_brazo_izquierdo[] = { 2.f,8.f,2.f };
+	float rotaciones_brazo_izquierdo[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenadas_brazo_izquierdo, dimensiones_brazo_izquierdo, texturas_brazo, rotaciones_brazo_izquierdo);
 	//brazo derecho
-	float coordenadas_brazo_derecho[] = { -3,12,0 };
+	float coordenadas_brazo_derecho[] = { -3.f,12.f,0.f };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float dimensiones_brazo_derecho[] = { 2,8,2 };
-	float rotaciones_brazo_derecho[] = { 0,0,0 };
+	float dimensiones_brazo_derecho[] = { 2.f,8.f,2.f };
+	float rotaciones_brazo_derecho[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenadas_brazo_derecho, dimensiones_brazo_derecho, texturas_brazo, rotaciones_brazo_derecho);
 
 
@@ -371,7 +394,7 @@ float porcentajePi(float coordenada_actual, float c_final,float largo) {
 
 float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplitud) {
 	float altura = sin(PI*x_porcentaje) * amplitud + sin(PI * z_porcentaje) * amplitud;
-	return altura > 0 ? altura : 0;
+	return altura > 0.f ? altura : 0.f;
 }
 
 void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura) {
@@ -410,14 +433,15 @@ void dibujar() {
 	glPopMatrix();
 
 	//codigo epicardo
-	float coordenadaOrigen[] = { 0.f,-2.5f,0.f };
+	float coordenadaOrigen[] = { 0.f,-5.0f,0.f };
 	//zona prohibida, es decir no se dibujará bloques en esa zona
 	float c1XZ[] = { -2.5f,2.5f };
 	float c2XZ[] = { 10.5f,11.f };
-	pisoDeTierra(5, coordenadaOrigen, -100, 100, -100, 100, c1XZ, c2XZ);
+	pisoDeTierra(10, coordenadaOrigen, -100.f, 100.f, -100.f, 100.f, c1XZ, c2XZ);
 
-	float coordenadaMontaña[] = { 0.f, -2.5f, 0.f };
-	montaña(5, coordenadaMontaña, 50, 50);
+	float coordenadaMontaña[] = { 0.f, -5.f, 0.f };
+	montaña(10.f, coordenadaMontaña, 50.f, 50.f);
+
 
 	escena1Steve();
 	//aqui irá la entrada a la mina uwu
