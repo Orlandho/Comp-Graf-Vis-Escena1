@@ -18,8 +18,8 @@ float centroY = 10;
 
 string nombres[] = {
 "bloque de tierra ABAJO.bmp",
-"bloque de tierra ARRIBA.bmp",
-"bloque de tierra LADO.bmp",
+"bloque de tierra gras ARRIBA.bmp",
+"bloque de tierra gras LADO.bmp",
 "pierna ABAJO.bmp",
 "pierna ADELANTE.bmp",
 "pierna ARRIBA.bmp",
@@ -196,30 +196,52 @@ void dibujarTexturaBloque(string nombre_textura, float altura, float anchura, fl
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 }
+void bloqueDeTierraGras(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
+
+	//A partir de aqui es el codigo para darle textura
+	const float correcion = (largo_y_ancho / 2.f);
+
+	//dibujar un lado del bloque EJE Z atras
+	dibujarTexturaBloque("bloque de tierra gras LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	//dibujar un lado del bloque EJE Z adelante
+	dibujarTexturaBloque("bloque de tierra gras LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + correcion);
+	//dibujar un lado del bloque EJE X izquierda
+	dibujarTexturaBloque("bloque de tierra gras LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	//dibujar un lado del bloque EJE X derecha
+	dibujarTexturaBloque("bloque de tierra gras LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+
+	//textura top y bottom :V
+	//textura en el TOP
+	dibujarTexturaBloque("bloque de tierra gras ARRIBA.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + correcion, coodenada_centroZ - correcion);
+	//textura en el bottom
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+
+}
+
 void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
 
 	//A partir de aqui es el codigo para darle textura
 	const float correcion = (largo_y_ancho / 2.f);
 
 	//dibujar un lado del bloque EJE Z atras
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 	//dibujar un lado del bloque EJE Z adelante
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + correcion);
 	//dibujar un lado del bloque EJE X izquierda
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 	//dibujar un lado del bloque EJE X derecha
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 
 	//textura top y bottom :V
 	//textura en el TOP
-	dibujarTexturaBloque("bloque de tierra ARRIBA.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + correcion, coodenada_centroZ - correcion);
 	//textura en el bottom
 	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 
 }
 
 //piso de tierra como en mi barrio :,,,,,V SAQUENME DE PERU
-void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_atras_direccionZ, float limite_adelante_direccionZ, float c1_zonaPXZ[], float c2_zonaPXZ[]) {
+void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_atras_direccionZ, float limite_adelante_direccionZ, float c1_zona2D_PXZ[], float c2_zona2D_PXZ[]) {
 	string mError = "Error en pisoDeTierra(float largo_ancho_bloque,float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_adelante_direccionZ, float limite_atras_direccionZ): ";
 
 	if (largo_ancho_bloque <= 0) {
@@ -231,20 +253,20 @@ void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limi
 	if (coordenadaOrigen[0]<limite_izquierdo_direccionX || coordenadaOrigen[0] >limite_derecho_direccionX || coordenadaOrigen[2] < limite_atras_direccionZ || coordenadaOrigen[2] >limite_adelante_direccionZ) {
 		throw runtime_error(mError + "Papu, Las coordenadas de origen deben estar dentro de los limites especificados, (inserte sticker de monito).");
 	}
-	if (c1_zonaPXZ[0] > c2_zonaPXZ[0] || c1_zonaPXZ[1] > c2_zonaPXZ[1]) {
+	if (c1_zona2D_PXZ[0] > c2_zona2D_PXZ[0] || c1_zona2D_PXZ[1] > c2_zona2D_PXZ[1]) {
 		throw runtime_error(mError + "Papu, Las coordenadas de la zona prohibida estan mal. Recuerda que c1 siempre esta más a la izquierda y abajo que c2");
 	}
 
 	float verdaderoOrigen[] = { (limite_izquierdo_direccionX < 0 ? -1 : 1) * (trunc((fabs(limite_izquierdo_direccionX) - fabs(coordenadaOrigen[0])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[0] ,(limite_atras_direccionZ < 0 ? -1 : 1) * (trunc((fabs(limite_atras_direccionZ) - fabs(coordenadaOrigen[2])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[2] };
-	bloqueDeTierra(verdaderoOrigen[0], coordenadaOrigen[1], verdaderoOrigen[1], largo_ancho_bloque);
+	bloqueDeTierraGras(verdaderoOrigen[0], coordenadaOrigen[1], verdaderoOrigen[1], largo_ancho_bloque);
 	for (float x = verdaderoOrigen[0]; x <= limite_derecho_direccionX; x += largo_ancho_bloque)
 	{
 		for (float z = verdaderoOrigen[1]; z <= limite_adelante_direccionZ; z += largo_ancho_bloque)
 		{
-			if (x >= c1_zonaPXZ[0] && x <= c2_zonaPXZ[0] && z >= c1_zonaPXZ[1] && z <= c2_zonaPXZ[1]) {
+			if (x >= c1_zona2D_PXZ[0] && x <= c2_zona2D_PXZ[0] && z >= c1_zona2D_PXZ[1] && z <= c2_zona2D_PXZ[1]) {
 				continue; //no dibujar bloque en zona prohibida
 			}
-			bloqueDeTierra(x, coordenadaOrigen[1], z, largo_ancho_bloque);
+			bloqueDeTierraGras(x, coordenadaOrigen[1], z, largo_ancho_bloque);
 		}
 	}
 
@@ -316,7 +338,7 @@ void escena1Steve() {
 	//brazo izquierdo
 	float coordenadas_brazo_izquierdo[] = { 3,12,0 };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	string texturas_brazo[] = { "brazo ADELANTE Y ATRAS.bmp","brazo ADELANTE Y ATRAS.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","bloque de tierra ARRIBA.bmp","bloque de tierra ABAJO.bmp" };
+	string texturas_brazo[] = { "brazo ADELANTE Y ATRAS.bmp","brazo ADELANTE Y ATRAS.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","bloque de tierra gras ARRIBA.bmp","bloque de tierra ABAJO.bmp" };
 	float dimensiones_brazo_izquierdo[] = { 2,8,2 };
 	float rotaciones_brazo_izquierdo[] = { 0,0,0 };
 	bloque_con_textura_deforme(coordenadas_brazo_izquierdo, dimensiones_brazo_izquierdo, texturas_brazo, rotaciones_brazo_izquierdo);
@@ -332,10 +354,13 @@ void escena1Steve() {
 }
 
 void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_limite) {
-	for (float i = coordenada_inicial[1]; i < altura_limite; i += ancho)
+	float i;
+	for (i = coordenada_inicial[1]; i < altura_limite; i += ancho)
 	{
 		bloqueDeTierra(coordenada_inicial[0], i, coordenada_inicial[2], ancho);
+		
 	}
+	bloqueDeTierraGras(coordenada_inicial[0], i, coordenada_inicial[2], ancho);
 }
 
 float porcentajePi(float coordenada_actual, float c_final,float largo) {
@@ -350,10 +375,14 @@ float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplit
 }
 
 void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura) {
-	if (largo <= 0) {
-		throw runtime_error("El largo de la montaña debe ser mayor a 0");
-	}
+	string mError = "Error en montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura): ";
 
+	if (largo <= 0) {
+		throw runtime_error(mError+"El largo de la montaña debe ser mayor a 0");
+	}
+	if (anchoBloque <= 0) {
+		throw runtime_error(mError+"El ancho del bloque debe ser mayor a 0");
+	}
 	float cX_final = esquinaOrigen[0] + largo;
 	float cZ_final = esquinaOrigen[2] + largo;
 
@@ -387,7 +416,7 @@ void dibujar() {
 	float c2XZ[] = { 10.5f,11.f };
 	pisoDeTierra(5, coordenadaOrigen, -100, 100, -100, 100, c1XZ, c2XZ);
 
-	float coordenadaMontaña[] = { 0, 0, 0 };
+	float coordenadaMontaña[] = { 0.f, -2.5f, 0.f };
 	montaña(5, coordenadaMontaña, 50, 50);
 
 	escena1Steve();
