@@ -372,39 +372,49 @@ void escena1Steve() {
 	float rotaciones_brazo_derecho[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenadas_brazo_derecho, dimensiones_brazo_derecho, texturas_brazo, rotaciones_brazo_derecho);
 
-
-
 }
 
-void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_limite) {
-	float i;
+bool estaEnZonaProhibida(float coordenada[], float c1_zonaP[], float c2_zonaP[]) {
+	return (coordenada[0] >= c1_zonaP[0] && coordenada[0] <= c2_zonaP[0] && coordenada[1] >= c1_zonaP[1] && coordenada[1] <= c2_zonaP[1] && coordenada[2] >= c1_zonaP[2] && coordenada[2] <= c2_zonaP[2]);
+}
+
+void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_limite, float c1_zonaP[], float c2_zonaP[]) {
+	float i = coordenada_inicial[1];
+	float coordenada_temp[] = { coordenada_inicial[0] ,0,coordenada_inicial[2] };
 	for (i = coordenada_inicial[1]; i < altura_limite; i += ancho)
 	{
+		coordenada_temp[1] = i;
+		if (estaEnZonaProhibida(coordenada_temp, c1_zonaP, c2_zonaP)) {
+			continue; //no dibujar bloque en zona prohibida
+		}
 		bloqueDeTierra(coordenada_inicial[0], i, coordenada_inicial[2], ancho);
-		
+	}
+	if (estaEnZonaProhibida(coordenada_temp, c1_zonaP, c2_zonaP))
+	{
+		return; //no dibujar bloque en zona prohibida
 	}
 	bloqueDeTierraGras(coordenada_inicial[0], i, coordenada_inicial[2], ancho);
 }
 
-float porcentajePi(float coordenada_actual, float c_final,float largo) {
+float porcentajePi(float coordenada_actual, float c_final, float largo) {
 
 	float largo_actual = fabs(c_final) - fabs(coordenada_actual);
-	return largo_actual/ largo;
+	return largo_actual / largo;
 }
 
 float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplitud) {
-	float altura = sin(PI*x_porcentaje) * amplitud + sin(PI * z_porcentaje) * amplitud;
+	float altura = sin(PI * x_porcentaje) * amplitud + sin(PI * z_porcentaje) * amplitud;
 	return altura > 0.f ? altura : 0.f;
 }
 
-void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura) {
+void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura,float cp1[],float cp2[]) {
 	string mError = "Error en montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura): ";
 
 	if (largo <= 0) {
-		throw runtime_error(mError+"El largo de la montaña debe ser mayor a 0");
+		throw runtime_error(mError + "El largo de la montaña debe ser mayor a 0");
 	}
 	if (anchoBloque <= 0) {
-		throw runtime_error(mError+"El ancho del bloque debe ser mayor a 0");
+		throw runtime_error(mError + "El ancho del bloque debe ser mayor a 0");
 	}
 	float cX_final = esquinaOrigen[0] + largo;
 	float cZ_final = esquinaOrigen[2] + largo;
@@ -413,10 +423,9 @@ void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura
 	{
 		for (float z = esquinaOrigen[2]; z <= cZ_final; z += anchoBloque)
 		{
-			float c_temp[] = { x, esquinaOrigen[1], z};
-			dibujarPilarArriba(c_temp, anchoBloque, esquinaOrigen[1] + calcularAlturaMontaña(porcentajePi(x,cX_final,largo), porcentajePi(z, cZ_final, largo), altura));
+			float c_temp[] = { x, esquinaOrigen[1], z };
+			dibujarPilarArriba(c_temp, anchoBloque, esquinaOrigen[1] + calcularAlturaMontaña(porcentajePi(x, cX_final, largo), porcentajePi(z, cZ_final, largo), altura),cp1,cp2);
 		}
-
 	}
 }
 
@@ -436,11 +445,13 @@ void dibujar() {
 	float coordenadaOrigen[] = { 0.f,-5.0f,0.f };
 	//zona prohibida, es decir no se dibujará bloques en esa zona
 	float c1XZ[] = { -2.5f,2.5f };
-	float c2XZ[] = { 10.5f,11.f };
+	float c2XZ[] = { 10.5f,40.f };
 	pisoDeTierra(10, coordenadaOrigen, -100.f, 100.f, -100.f, 100.f, c1XZ, c2XZ);
 
-	float coordenadaMontaña[] = { 0.f, -5.f, 0.f };
-	montaña(10.f, coordenadaMontaña, 50.f, 50.f);
+	float coordenadaMontaña[] = { 0.f, 5.f, 0.f };
+	float coordenadaProhibida1[] = {0,0,0};
+	float coordenadaProhibida2[] = { 20,20,20 };
+	montaña(10.f, coordenadaMontaña, 100.f, 50.f, coordenadaProhibida1, coordenadaProhibida2);
 
 
 	escena1Steve();
