@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iostream>
 #include "texturas/RGBImage.h"
+#include <math.h>
 
 using namespace std;
 
@@ -198,7 +199,7 @@ void dibujarTexturaBloque(string nombre_textura, float altura, float anchura, fl
 void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
 
 	//A partir de aqui es el codigo para darle textura
-	const float correcion = (largo_y_ancho / 2);
+	const float correcion = (largo_y_ancho / 2.f);
 
 	//dibujar un lado del bloque EJE Z atras
 	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
@@ -218,36 +219,32 @@ void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float cood
 }
 
 //piso de tierra como en mi barrio :,,,,,V SAQUENME DE PERU
-void pisoDeTierra(float largo_ancho_de_los_bloques) {
+void pisoDeTierra(float largo_ancho_bloque, float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_atras_direccionZ, float limite_adelante_direccionZ,float c1_zonaPXZ[],float c2_zonaPXZ[]) {
+	string mError = "Error en pisoDeTierra(float largo_ancho_bloque,float coordenadaOrigen[], float limite_izquierdo_direccionX, float limite_derecho_direccionX, float limite_adelante_direccionZ, float limite_atras_direccionZ): ";
 
-	//estas son las coordenadas del primer bloque por cada cuadrante, Ya tu sabe
-	const float constante = largo_ancho_de_los_bloques / 2;//una mausque herramienta misteriosa que usare más tarde
+	if (largo_ancho_bloque <= 0) {
+		throw runtime_error(mError + "Bruh, dale causa como quieres que imprima un bloque de 0 centimetros PE");
+	}
+	if (limite_izquierdo_direccionX > limite_derecho_direccionX || limite_atras_direccionZ > limite_adelante_direccionZ) {
+		throw runtime_error(mError + "El limite izquierda no puede estar a la derecha del limite derecho o el limite de atras no puede estar adelante del limite de adelante y viceversa. monito");
+	}
+	if (coordenadaOrigen[0]<limite_izquierdo_direccionX || coordenadaOrigen[0] >limite_derecho_direccionX || coordenadaOrigen[2] < limite_atras_direccionZ || coordenadaOrigen[2] >limite_adelante_direccionZ) {
+		throw runtime_error(mError + "Papu, Las coordenadas de origen deben estar dentro de los limites especificados, (inserte sticker de monito).");
+	}
+	if (c1_zonaPXZ[0]> c2_zonaPXZ[0]|| c1_zonaPXZ[1] > c2_zonaPXZ[1]) {
+		throw runtime_error(mError + "Papu, Las coordenadas de la zona prohibida estan mal. Recuerda que c1 siempre esta más a la izquierda y abajo que c2");
+	}
 
-
-	const float cuadranteI_X = constante;
-	const float cuadranteI_Z = constante;
-
-	const float cuadranteII_X = -constante;
-	const float cuadranteII_Z = constante;
-
-	const float cuadranteIII_X = -constante;
-	const float cuadranteIII_Z = -constante;
-
-	const float cuadranteIV_X = constante;
-	const float cuadranteIV_Z = -constante;
-
-	const int cantidad_bloques_direccionX = 20;
-	const int cantidad_bloques_direccionY = 20;
-
-	//me senti inspirado gente
-
-	//CUADRANTE I, II, III, IV
-	for (int i = 0; i < cantidad_bloques_direccionX; i++) {
-		for (int j = 0; j < cantidad_bloques_direccionY; j++) {
-			bloqueDeTierra(cuadranteI_X + (i * (cuadranteI_X * 2)), -constante, cuadranteI_Z + (j * (cuadranteI_Z * 2)), largo_ancho_de_los_bloques);
-			bloqueDeTierra(cuadranteII_X + (i * (cuadranteII_X * 2)), -constante, cuadranteII_Z + (j * (cuadranteII_Z * 2)), largo_ancho_de_los_bloques);
-			bloqueDeTierra(cuadranteIII_X + (i * (cuadranteIII_X * 2)), -constante, cuadranteIII_Z + (j * (cuadranteIII_Z * 2)), largo_ancho_de_los_bloques);
-			bloqueDeTierra(cuadranteIV_X + (i * (cuadranteIV_X * 2)), -constante, cuadranteIV_Z + (j * (cuadranteIV_Z * 2)), largo_ancho_de_los_bloques);
+	float verdaderoOrigen[] = { (limite_izquierdo_direccionX<0?-1:1)*(trunc((abs(limite_izquierdo_direccionX) - abs(coordenadaOrigen[0])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[0] ,(limite_atras_direccionZ < 0 ? -1 : 1)*(trunc((abs(limite_atras_direccionZ) - abs(coordenadaOrigen[2])) / largo_ancho_bloque) * largo_ancho_bloque) - coordenadaOrigen[2] };
+	bloqueDeTierra(verdaderoOrigen[0], coordenadaOrigen[1], verdaderoOrigen[1], largo_ancho_bloque);
+	for (float x = verdaderoOrigen[0]; x <= limite_derecho_direccionX; x += largo_ancho_bloque)
+	{
+		for (float z = verdaderoOrigen[1]; z <= limite_adelante_direccionZ; z += largo_ancho_bloque)
+		{
+			if(x >= c1_zonaPXZ[0] && x <= c2_zonaPXZ[0] && z >= c1_zonaPXZ[1] && z <= c2_zonaPXZ[1]) {
+				continue; //no dibujar bloque en zona prohibida
+			}
+			bloqueDeTierra(x, coordenadaOrigen[1], z, largo_ancho_bloque);
 		}
 	}
 
@@ -347,7 +344,11 @@ void dibujar() {
 	glPopMatrix();
 
 	//codigo epicardo
-	pisoDeTierra(5);
+	float coordenadaOrigen[] = { 0.f,-2.5f,0.f };
+	//zona prohibida, es decir no se dibujará bloques en esa zona
+	float c1XZ[] = {-2.5f,2.5f};
+	float c2XZ[] = {10.5f,11.f};
+	pisoDeTierra(5, coordenadaOrigen, -100, 100, -100, 100, c1XZ, c2XZ);
 
 	//aqui irá Steve
 	//bloque_con_textura_deforme(10,10,10,8,2);
