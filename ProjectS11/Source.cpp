@@ -4,8 +4,6 @@
 #include <iostream>
 #include "texturas/RGBImage.h"
 
-
-
 using namespace std;
 
 
@@ -40,11 +38,10 @@ string nombres[] = {
 "torso ARRIBA.bmp",
 "cabeza ATRAS.bmp"
 };
+
 const int nombres_length = sizeof(nombres) / sizeof(string);
 
 GLuint texturas[nombres_length];
-
-
 
 void loadTexturesFromFile(const char* filename, int index) {
 	RgbImage theTextMap(filename);
@@ -58,7 +55,6 @@ void loadTexturesFromFile(const char* filename, int index) {
 		theTextMap.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE, theTextMap.ImageData());
 }
 
-
 void cargarImagenes() {
 	for (int i = 0; i < nombres_length; i++) {
 		const string ruta = "texturas/" + nombres[i];
@@ -66,13 +62,13 @@ void cargarImagenes() {
 	}
 }
 
-int buscarTextura(string nombre) {  
-    for (int i = 0; i < nombres_length; i++) {  
-        if (nombres[i] == nombre) {  
-            return i;  
-        }  
-    }  
-    throw runtime_error("El nombre de monito especificado no existe :,v");  
+int buscarTextura(string nombre) {
+	for (int i = 0; i < nombres_length; i++) {
+		if (nombres[i] == nombre) {
+			return i;
+		}
+	}
+	throw runtime_error("El nombre de monito especificado no existe :,v");
 }
 
 void iniciarVentana(int w, int h) {
@@ -159,7 +155,6 @@ void ejes() {
 
 	glPopMatrix();
 
-
 }
 
 //NOTA: esta funcion es para un bloque SIMETRICO
@@ -202,34 +197,23 @@ void dibujarTexturaBloque(string nombre_textura, float altura, float anchura, fl
 }
 void bloqueDeTierra(float coodenada_centroX, float coodenada_centroY, float coodenada_centroZ, float largo_y_ancho) {
 
-	//codigo para crear el bloque sin texturas
-	glPushMatrix();
-
-	glTranslated(coodenada_centroX, coodenada_centroY, coodenada_centroZ);
-	glScaled(largo_y_ancho, largo_y_ancho, largo_y_ancho);
-	glutSolidCube(1);
-
-	glPopMatrix();
-
-
-
 	//A partir de aqui es el codigo para darle textura
 	const float correcion = (largo_y_ancho / 2);
 
 	//dibujar un lado del bloque EJE Z atras
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - (correcion + 0.01));
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 	//dibujar un lado del bloque EJE Z adelante
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + (correcion + 0.01));
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ + correcion);
 	//dibujar un lado del bloque EJE X izquierda
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 	//dibujar un lado del bloque EJE X derecha
-	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + (correcion + 0.01), coodenada_centroY - correcion, coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra LADO.bmp", largo_y_ancho, 0, -90, coodenada_centroX + correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 
 	//textura top y bottom :V
 	//textura en el TOP
-	dibujarTexturaBloque("bloque de tierra ARRIBA.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + (correcion + 0.01), coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ARRIBA.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY + correcion, coodenada_centroZ - correcion);
 	//textura en el bottom
-	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - (correcion + 0.01), coodenada_centroZ - correcion);
+	dibujarTexturaBloque("bloque de tierra ABAJO.bmp", largo_y_ancho, 90, 0, coodenada_centroX - correcion, coodenada_centroY - correcion, coodenada_centroZ - correcion);
 
 }
 
@@ -290,15 +274,15 @@ void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], 
 	//dibujar un lado del bloque EJE Z adelante
 	dibujarTexturaBloque(indice_textura[1], dimensionesXYZ[1], dimensionesXYZ[0], rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] + (correcionAnchoZ + 0.01));
 	//dibujar un lado del bloque EJE X izquierda
-	dibujarTexturaBloque(indice_textura[2], dimensionesXYZ[1], dimensionesXYZ[2], rotacionXYZ[0], -(90+ rotacionXYZ[1]), rotacionXYZ[2], coordenadasXYZ[0] - (correcionAnchoX + 0.01), coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] - correcionAnchoZ);
+	dibujarTexturaBloque(indice_textura[2], dimensionesXYZ[1], dimensionesXYZ[2], rotacionXYZ[0], -(90 + rotacionXYZ[1]), rotacionXYZ[2], coordenadasXYZ[0] - (correcionAnchoX + 0.01), coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] - correcionAnchoZ);
 	//dibujar un lado del bloque EJE X derecha
-	dibujarTexturaBloque(indice_textura[3], dimensionesXYZ[1], dimensionesXYZ[2], rotacionXYZ[0], -(90+ rotacionXYZ[1]), rotacionXYZ[2], coordenadasXYZ[0] + (correcionAnchoX + 0.01), coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] - correcionAnchoZ);
+	dibujarTexturaBloque(indice_textura[3], dimensionesXYZ[1], dimensionesXYZ[2], rotacionXYZ[0], -(90 + rotacionXYZ[1]), rotacionXYZ[2], coordenadasXYZ[0] + (correcionAnchoX + 0.01), coordenadasXYZ[1] - correcionAltura, coordenadasXYZ[2] - correcionAnchoZ);
 
 	//textura top y bottom :V
 	//textura en el TOP
-	dibujarTexturaBloque(indice_textura[4], dimensionesXYZ[2], dimensionesXYZ[0], 90+ rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] + (correcionAltura + 0.01), coordenadasXYZ[2] - correcionAnchoZ);
+	dibujarTexturaBloque(indice_textura[4], dimensionesXYZ[2], dimensionesXYZ[0], 90 + rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] + (correcionAltura + 0.01), coordenadasXYZ[2] - correcionAnchoZ);
 	//textura en el bottom
-	dibujarTexturaBloque(indice_textura[5], dimensionesXYZ[2], dimensionesXYZ[0], 90+ rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] - (correcionAltura + 0.01), coordenadasXYZ[2] - correcionAnchoZ);
+	dibujarTexturaBloque(indice_textura[5], dimensionesXYZ[2], dimensionesXYZ[0], 90 + rotacionXYZ[0], rotacionXYZ[1], rotacionXYZ[2], coordenadasXYZ[0] - correcionAnchoX, coordenadasXYZ[1] - (correcionAltura + 0.01), coordenadasXYZ[2] - correcionAnchoZ);
 
 }
 
@@ -308,7 +292,7 @@ void escena1Steve() {
 	float coordenada_pierna_izquierda[] = { 1,4,0 };
 	string texturas_pierna[] = { "pierna ATRAS.bmp","pierna ADELANTE.bmp","pierna LADO.bmp","pierna LADO.bmp","pierna ARRIBA.bmp","pierna ABAJO.bmp" };
 	float dimensiones_pierna[] = { 2,8,2 };
-	float rotaciones_pierna_izquierda[] = {0,0,0};
+	float rotaciones_pierna_izquierda[] = { 0,0,0 };
 	bloque_con_textura_deforme(coordenada_pierna_izquierda, dimensiones_pierna, texturas_pierna, rotaciones_pierna_izquierda);
 
 	//pierna derecha
