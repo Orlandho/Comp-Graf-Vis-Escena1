@@ -381,7 +381,7 @@ bool estaEnZonaProhibida(float coordenada[], float c1_zonaP[], float c2_zonaP[])
 void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_limite, float c1_zonaP[], float c2_zonaP[]) {
 	float i = coordenada_inicial[1];
 	float coordenada_temp[] = { coordenada_inicial[0] ,0,coordenada_inicial[2] };
-	for (i = coordenada_inicial[1]; i < altura_limite; i += ancho)
+	for (i = coordenada_inicial[1]; i <= altura_limite; i += ancho)
 	{
 		coordenada_temp[1] = i;
 		if (estaEnZonaProhibida(coordenada_temp, c1_zonaP, c2_zonaP)) {
@@ -399,15 +399,15 @@ void dibujarPilarArriba(float coordenada_inicial[], float ancho, float altura_li
 float porcentajePi(float coordenada_actual, float c_final, float largo) {
 
 	float largo_actual = fabs(c_final) - fabs(coordenada_actual);
-	return largo_actual / largo;
+	return fabs(largo_actual / largo);
 }
 
-float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplitud) {
+float calcularAlturaMontaña(float x_porcentaje, float z_porcentaje, float amplitud, float alturaOrigen) {
 	float altura = sin(PI * x_porcentaje) * amplitud + sin(PI * z_porcentaje) * amplitud;
-	return altura > 0.f ? altura : 0.f;
+	return altura >= alturaOrigen ? altura : alturaOrigen;
 }
 
-void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura,float cp1[],float cp2[]) {
+void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura, float cp1[], float cp2[]) {
 	string mError = "Error en montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura): ";
 
 	if (largo <= 0) {
@@ -424,11 +424,64 @@ void montaña(float anchoBloque, float esquinaOrigen[], float largo, float altura
 		for (float z = esquinaOrigen[2]; z <= cZ_final; z += anchoBloque)
 		{
 			float c_temp[] = { x, esquinaOrigen[1], z };
-			dibujarPilarArriba(c_temp, anchoBloque, esquinaOrigen[1] + calcularAlturaMontaña(porcentajePi(x, cX_final, largo), porcentajePi(z, cZ_final, largo), altura),cp1,cp2);
+			dibujarPilarArriba(c_temp, anchoBloque, esquinaOrigen[1] + calcularAlturaMontaña(porcentajePi(x, cX_final, largo), porcentajePi(z, cZ_final, largo), altura, esquinaOrigen[1]), cp1, cp2);
 		}
 	}
 }
 
+void caminoDePiedra(float esquinaOrigen[], float tamaño, float cantBloquesLargo) {
+	if (tamaño < 1) {
+		throw runtime_error("El tamaño del bloque de piedra debe ser mayor a 0");
+	}
+	if (cantBloquesLargo < 1) {
+		throw runtime_error("Lacantidad de bloques de piedra debe ser mayor a 0");
+	}
+	float coordenadaActual[] = { esquinaOrigen[0], esquinaOrigen[1], esquinaOrigen[2] };
+	for (int j = 0; j < cantBloquesLargo; j++)
+	{
+		for (int i = 0; i <= cantBloquesLargo; i++) {
+			bloqueDePiedra(coordenadaActual[0] + (i * tamaño), coordenadaActual[1], coordenadaActual[2], tamaño);
+		}
+		coordenadaActual[0] = esquinaOrigen[0];
+		coordenadaActual[1] -= tamaño;
+		coordenadaActual[2] += tamaño;
+	}
+
+}
+void paredEje_X(float esquinaOrigen[], float tamaño, float cantBloquesLargo) {
+	if (tamaño < 1) {
+		throw runtime_error("El tamaño del bloque de piedra debe ser mayor a 0");
+	}
+	if (cantBloquesLargo < 1) {
+		throw runtime_error("Lacantidad de bloques de piedra debe ser mayor a 0");
+	}
+	float coordenadaActual[] = { esquinaOrigen[0], esquinaOrigen[1], esquinaOrigen[2] };
+	for (int j = 0; j < cantBloquesLargo; j++)
+	{
+		for (int i = 0; i <= cantBloquesLargo; i++) {
+			bloqueDePiedra(coordenadaActual[0] + (i * tamaño), coordenadaActual[1], coordenadaActual[2], tamaño);
+		}
+		coordenadaActual[1] -= tamaño;
+	}
+
+}
+void paredEje_Z(float esquinaOrigen[], float tamaño, float cantBloquesLargo) {
+	if (tamaño < 1) {
+		throw runtime_error("El tamaño del bloque de piedra debe ser mayor a 0");
+	}
+	if (cantBloquesLargo < 1) {
+		throw runtime_error("Lacantidad de bloques de piedra debe ser mayor a 0");
+	}
+	float coordenadaActual[] = { esquinaOrigen[0], esquinaOrigen[1], esquinaOrigen[2] };
+	for (int j = 0; j < cantBloquesLargo; j++)
+	{
+		for (int i = 0; i <= cantBloquesLargo; i++) {
+			bloqueDePiedra(coordenadaActual[0], coordenadaActual[1], coordenadaActual[2] + (i * tamaño), tamaño);
+		}
+		coordenadaActual[1] -= tamaño;
+	}
+
+}
 void dibujar() {
 
 	inicializarLuces();
@@ -444,18 +497,30 @@ void dibujar() {
 	//codigo epicardo
 	float coordenadaOrigen[] = { 0.f,-5.0f,0.f };
 	//zona prohibida, es decir no se dibujará bloques en esa zona
-	float c1XZ[] = { -2.5f,2.5f };
-	float c2XZ[] = { 10.5f,40.f };
+	float c1XZ[] = { -20.5f,2.5f };
+	float c2XZ[] = { 20.5f,40.f };
 	pisoDeTierra(10, coordenadaOrigen, -100.f, 100.f, -100.f, 100.f, c1XZ, c2XZ);
 
-	float coordenadaMontaña[] = { 0.f, 5.f, 0.f };
-	float coordenadaProhibida1[] = {0,0,0};
-	float coordenadaProhibida2[] = { 20,20,20 };
-	montaña(10.f, coordenadaMontaña, 100.f, 50.f, coordenadaProhibida1, coordenadaProhibida2);
+	float coordenadaMontaña1[] = { -50.f, 5.f, 10.f };
+	float coordenadaProhibida1[] = { -20.f,0.f,0.f };
+	float coordenadaProhibida2[] = { 20.f,25.f,40.f };
+	montaña(10.f, coordenadaMontaña1, 100.f, 50.f, coordenadaProhibida1, coordenadaProhibida2);
 
+	float coordenadaMontaña2[] = { -185.f, 5.f, -150.f };
+	float coordenada2Prohibida1[] = { -20.f,0.f,0.f };
+	float coordenada2Prohibida2[] = { 20.f,25.f,40.f };
+	montaña(10.f, coordenadaMontaña2, 150.f, 50.f, coordenada2Prohibida1, coordenada2Prohibida2);
 
+	//bloques de piedra
+	float coordenadaPiedraOrigen[] = { -20.f, -5.f, 10.f };
+	caminoDePiedra(coordenadaPiedraOrigen, 10, 5);
+	float coordenadaParedPiedra1[] = { -20.f, -15.f, 50.f };
+	paredEje_X(coordenadaParedPiedra1,10,5);
+	float coordenadaParedPiedra2[] = { -30.f, -15.f, 10.f };
+	paredEje_Z(coordenadaParedPiedra2,10,5);
+	float coordenadaParedPiedra3[] = { 30.f, -15.f, 10.f };
+	paredEje_Z(coordenadaParedPiedra3, 10, 5);
 	escena1Steve();
-	//aqui irá la entrada a la mina uwu
 
 
 	glutSwapBuffers();
