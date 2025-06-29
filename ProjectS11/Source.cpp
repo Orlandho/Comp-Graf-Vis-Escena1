@@ -8,7 +8,7 @@
 using namespace std;
 
 
-float camaraX = -20;
+float camaraX = 30;
 float camaraY = 15;
 float camaraZ = 50;
 
@@ -44,6 +44,8 @@ string nombres[] = {
 const int nombres_length = sizeof(nombres) / sizeof(string);
 
 GLuint texturas[nombres_length];
+
+float incrementoXYZ[] = { 0.0f, 0.0f, 0.0f },velocidad=2.f;
 
 void loadTexturesFromFile(const char* filename, int index) {
 	RgbImage theTextMap(filename);
@@ -331,27 +333,27 @@ void bloque_con_textura_deforme(float coordenadasXYZ[], float dimensionesXYZ[], 
 void escena1Steve() {
 	//Pierna izquierda
 	//texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float coordenada_pierna_izquierda[] = { 1.f,4.f,0.f };
+	float coordenada_pierna_izquierda[] = { 1.f+ incrementoXYZ[0],4.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	string texturas_pierna[] = { "pierna ATRAS.bmp","pierna ADELANTE.bmp","pierna LADO.bmp","pierna LADO.bmp","pierna ARRIBA.bmp","pierna ABAJO.bmp" };
 	float dimensiones_pierna[] = { 2.f,8.f,2.f };
 	float rotaciones_pierna_izquierda[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_pierna_izquierda, dimensiones_pierna, texturas_pierna, rotaciones_pierna_izquierda);
 
 	//pierna derecha
-	float coordenada_pierna_derecha[] = { -1.f,4.f,0.f };
+	float coordenada_pierna_derecha[] = { -1.f + incrementoXYZ[0],4.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	float rotaciones_pierna_derecha[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_pierna_derecha, dimensiones_pierna, texturas_pierna, rotaciones_pierna_derecha);
 
 	//torso
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
-	float coordenada_torso[] = { 0.f,12.f,0.f };
+	float coordenada_torso[] = { 0.f + incrementoXYZ[0],12.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	string texturas_torso[] = { "torso ATRAS.bmp","torso ADELANTE.bmp","torso DERECHA.bmp","torso IZQUIERDA.bmp","torso ARRIBA.bmp","torso ABAJO.bmp" };
 	float dimensiones2[] = { 4.f,8.f,2.f };
 	float rotaciones_pierna_torso[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenada_torso, dimensiones2, texturas_torso, rotaciones_pierna_torso);
 
 	//cabeza
-	float coordenadas_cabeza[] = { 0.f,18.f,0.f };
+	float coordenadas_cabeza[] = { 0.f + incrementoXYZ[0],18.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	string texturas_cabeza[] = { "cabeza ATRAS.bmp","cabeza ADELANTE.bmp","cabeza LADO.bmp" ,"cabeza LADO.bmp","cabeza ARRIBA.bmp","cabeza ABAJO.bmp" };
 	float dimensiones_cabeza[] = { 4.5f,4.5f,4.5f };
@@ -359,14 +361,14 @@ void escena1Steve() {
 	bloque_con_textura_deforme(coordenadas_cabeza, dimensiones_cabeza, texturas_cabeza, rotaciones_cabeza);
 
 	//brazo izquierdo
-	float coordenadas_brazo_izquierdo[] = { 3.f,12.f,0.f };
+	float coordenadas_brazo_izquierdo[] = { 3.f + incrementoXYZ[0],12.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	string texturas_brazo[] = { "brazo ADELANTE Y ATRAS.bmp","brazo ADELANTE Y ATRAS.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","brazo CONTRA Y CONTACTO TORSO.bmp","bloque de tierra gras ARRIBA.bmp","bloque de tierra ABAJO.bmp" };
 	float dimensiones_brazo_izquierdo[] = { 2.f,8.f,2.f };
 	float rotaciones_brazo_izquierdo[] = { 0.f,0.f,0.f };
 	bloque_con_textura_deforme(coordenadas_brazo_izquierdo, dimensiones_brazo_izquierdo, texturas_brazo, rotaciones_brazo_izquierdo);
 	//brazo derecho
-	float coordenadas_brazo_derecho[] = { -3.f,12.f,0.f };
+	float coordenadas_brazo_derecho[] = { -3.f + incrementoXYZ[0],12.f + incrementoXYZ[1],0.f + incrementoXYZ[2] };
 	//recordando texturas indices 0=atras, 1=adelante, 2=izquierda, 3=derecha, 4=top, 5=bottom
 	float dimensiones_brazo_derecho[] = { 2.f,8.f,2.f };
 	float rotaciones_brazo_derecho[] = { 0.f,0.f,0.f };
@@ -488,7 +490,7 @@ void dibujar() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(radio * cos(angulo), camaraY, radio * sin(angulo), 0, centroY, 0, 0, 1, 0);
+	gluLookAt(radio * cos(angulo), camaraY, -radio * sin(angulo), 0, centroY, 0, 0, 1, 0);
 	glClearColor(255 / 255.0, 255 / 255.0, 210 / 255.0, 1);
 	glPushMatrix();
 	ejes();
@@ -520,6 +522,7 @@ void dibujar() {
 	paredEje_Z(coordenadaParedPiedra2,10,5);
 	float coordenadaParedPiedra3[] = { 30.f, -15.f, 10.f };
 	paredEje_Z(coordenadaParedPiedra3, 10, 5);
+	
 	escena1Steve();
 
 
@@ -535,42 +538,34 @@ void timer(int t) {
 
 }
 
-
-void teclado(int tecla, int x, int y) {
+void teclado(unsigned char tecla, int x, int y) {
 	cout << tecla << endl;
 
 	switch (tecla)
 	{
-	case 100:
-		angulo -= 0.05;
+	case 'w':
+		incrementoXYZ[2] += 0.5f;
 		break;
-	case 102:
-		angulo += 0.05;
+	case 's':
+		incrementoXYZ[2] -= 0.5f;
 		break;
-	case 101:
-		camaraY += 1;
+	case 'a':
+		incrementoXYZ[0] += 0.5f;
 		break;
-	case 103:
-		camaraY -= 1;
+	case 'd':
+		incrementoXYZ[0] -= 0.5f;
 		break;
-	case 105:
-		radio += 2;
+	case 'q':
+		incrementoXYZ[1] -= 0.5f;
 		break;
-	case 104:
-		radio -= 2;
-		break;
-	case 106:
-		centroY += 2;
-		break;
-	case 107:
-		centroY -= 2;
+	case 'e':
+		incrementoXYZ[1] += 0.5f;
 		break;
 	default:
 		break;
 	}
 
 }
-
 
 int main(int argc, char* argv[]) {
 
@@ -582,7 +577,8 @@ int main(int argc, char* argv[]) {
 	cargarImagenes();
 	glutReshapeFunc(iniciarVentana),
 		glutDisplayFunc(dibujar);
-	glutSpecialFunc(teclado);
+	//glutSpecialFunc(teclado);
+	glutKeyboardFunc(teclado);
 	glutTimerFunc(0, timer, 0);
 	glutMainLoop();
 	return 0;
